@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { CreatePlayerDTO } from './dtos/createPlayer.dto';
 import { PlayersService } from './players.service';
+import { Player } from './interfaces/player.interface';
 
 @Controller('api/v1/players')
 export class PlayersController {
@@ -9,15 +10,25 @@ export class PlayersController {
 
     @Post()
     async createUpdatePlayer(
-        @Body() createPlayerDTO: CreatePlayerDTO) {
+        @Body() createPlayerDTO: CreatePlayerDTO): Promise<Player> {
             
-            await this.playersService.createUpdatePlayer(createPlayerDTO);
+            return await this.playersService.createUpdatePlayer(createPlayerDTO);
     };
 
     @Get()
-    async home() {
-        return JSON.stringify({
-            "Message": "Hello! Welcome to SmartRanking!"
-        })
+    async getPlayers(@Query('email') email: string): Promise<Player[] | Player> {
+
+        if(email) {
+            return await this.playersService.findPlayerByEmail(email);
+        } else {
+            return await this.playersService.findAllPlayers();
+        };
     };
+
+    @Delete()
+    async deletePlayer(@Query('email') email: string): Promise<String> {
+
+        return await this.playersService.deletePlayer(email);
+    }
+
 };
