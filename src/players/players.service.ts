@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreatePlayerDTO } from './dtos/createPlayer.dto';
 import { Player } from './interfaces/player.interface';
 import { InjectModel } from '@nestjs/mongoose';
@@ -10,12 +10,26 @@ export class PlayersService {
     constructor(@InjectModel('Player') private readonly playerModel: Model<Player>) {};
 
     async createPlayer(createPlayerDTO: CreatePlayerDTO): Promise<Player> {
+
+        const { email, phoneNumber } = createPlayerDTO;
+
+        const emailAlreadyExists = await this.playerModel.findOne({ email });
+        const phoneNumberAlreadyExists = await this.playerModel.findOne({ phoneNumber });
+
+        if(emailAlreadyExists) {
+            throw new BadRequestException(`Email it's not available!'`)
+        };
+
+        if(phoneNumberAlreadyExists) {
+            throw new BadRequestException(`Phone Number it's not available!`)
+        };
+
         const player = await new this.playerModel(createPlayerDTO).save();
         
         return player;
     };
     
-    async getPlayer(email: string): Promise<Player[] | Player> {
+    async getPlayers(email: string): Promise<Player[] | Player> {
 
 
         if(!email) {
