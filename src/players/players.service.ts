@@ -61,4 +61,23 @@ export class PlayersService {
             player: deleted.name
         };
     }; 
+
+    async updatePlayer(email: string, data: Object): Promise<Object> {
+
+        if(Object.keys(data).length === 0) {
+            throw new BadRequestException('No data was provided!')
+        };
+
+        const updatedPlayer = await this.playerModel.findOneAndUpdate({ email }, {$set: data }).exec();
+
+        if(!updatedPlayer) {
+            throw new NotFoundException('Player not found!')
+        };
+
+        return {
+            statusCode: 201,
+            message: `Player's ${Object.getOwnPropertyNames(data)} updated successfully! `
+        };
+
+    };
 };

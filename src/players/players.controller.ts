@@ -27,5 +27,12 @@ export class PlayersController {
     async deletePlayer(
         @Query('email') email: string): Promise<Object> {
             return await this.playersService.deletePlayer(email)
-    };
+    }; 
+
+    @Patch()
+    async updatePlayer(
+        @Query('email') email: string, @Body() data: Object): Promise<Object> {
+            return await this.playersService.updatePlayer(email, data);
+        };
+    
 };

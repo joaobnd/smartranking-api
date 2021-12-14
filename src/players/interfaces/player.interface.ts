@@ -5,8 +5,8 @@ export interface Player extends Document {
    readonly phoneNumber: string;
    readonly email: string;
    name: string;
-   ranking: string;
-   positionRanking: number;
-   urlProfilePic: string;
+   ranking?: string;
+   positionRanking?: number;
+   urlProfilePic?: string;
    
 };
